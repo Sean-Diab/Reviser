@@ -1,0 +1,27 @@
+# Reviser checkpoints are available at:
+# https://huggingface.co/sean-diab/reviser-checkpoints
+# Download reviser_300m.pt and set this path accordingly.
+model:
+  name: reviser_300m
+  family: reviser
+  checkpoint: checkpoints/reviser_300m.pt
+  d_model: 896
+  n_heads: 14
+  d_ff: 3584
+  n_layers: 26
+  vocab_size: 50291
+data:
+  prompt_prefix_tokens: 35
+  max_canvas_length: 512
+  dataset: c4_v2
+training:
+  seed: 123
+  learning_rate: 1.0e-5
+  min_learning_rate: 1.0e-6
+decoding:
+  temperature: 0.9
+  top_k: 50
+  total_max_actions: 256
+  eor_logit_bias: 0.0
+evaluation:
+  scorer: gpt2_base

@@ -1,0 +1,58 @@
+﻿{
+  "created_at": "2026-04-24T00:00:00Z",
+  "dataset": "C4 continuation benchmark (English validation split)",
+  "judge": "Skywork-Critic-8B",
+  "n_examples_per_comparison": 3000,
+  "comparisons": {
+    "reviser_vs_ar_baseline": [
+      {
+        "scale": "100M",
+        "reviser_win_rate": 0.613,
+        "baseline_win_rate": 0.387
+      },
+      {
+        "scale": "300M",
+        "reviser_win_rate": 0.544,
+        "baseline_win_rate": 0.456
+      }
+    ],
+    "reviser_vs_other_ar_baselines": [
+      {
+        "family": "Cerebras",
+        "baseline_size_100m": "111M",
+        "reviser_win_rate_100m": 0.721,
+        "baseline_win_rate_100m": 0.279,
+        "baseline_size_300m": "256M",
+        "reviser_win_rate_300m": 0.713,
+        "baseline_win_rate_300m": 0.287
+      },
+      {
+        "family": "Pythia",
+        "baseline_size_100m": "160M",
+        "reviser_win_rate_100m": 0.688,
+        "baseline_win_rate_100m": 0.312,
+        "baseline_size_300m": "410M",
+        "reviser_win_rate_300m": 0.513,
+        "baseline_win_rate_300m": 0.487
+      },
+      {
+        "family": "GPT-2",
+        "baseline_size_100m": "117M",
+        "reviser_win_rate_100m": 0.586,
+        "baseline_win_rate_100m": 0.414,
+        "baseline_size_300m": "345M",
+        "reviser_win_rate_300m": 0.504,
+        "baseline_win_rate_300m": 0.496
+      },
+      {
+        "family": "OPT",
+        "baseline_size_100m": "125M",
+        "reviser_win_rate_100m": 0.539,
+        "baseline_win_rate_100m": 0.461,
+        "baseline_size_300m": "350M",
+        "reviser_win_rate_300m": 0.499,
+        "baseline_win_rate_300m": 0.501
+      }
+    ]
+  }
+}

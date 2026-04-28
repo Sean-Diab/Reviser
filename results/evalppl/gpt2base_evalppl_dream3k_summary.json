@@ -1,0 +1,63 @@
+﻿{
+  "created_at": "2026-04-24T00:00:00Z",
+  "dataset": "C4 continuation benchmark (English validation split)",
+  "n_examples_per_comparison": 3000,
+  "evaluators": [
+    "GPT-2 Large",
+    "Dream-7B"
+  ],
+  "comparisons": {
+    "reviser_vs_ar_baseline": [
+      {
+        "model": "AR Baseline 100M",
+        "evalppl_gpt2_large": 13.5210,
+        "evalppl_dream_7b": 13.9584
+      },
+      {
+        "model": "Reviser 100M",
+        "evalppl_gpt2_large": 30.6355,
+        "evalppl_dream_7b": 22.6693
+      },
+      {
+        "model": "AR Baseline 300M",
+        "evalppl_gpt2_large": 12.5122,
+        "evalppl_dream_7b": 12.0203
+      },
+      {
+        "model": "Reviser 300M",
+        "evalppl_gpt2_large": 17.7700,
+        "evalppl_dream_7b": 15.7733
+      }
+    ],
+    "reviser_vs_sedd_mdlm": [
+      {
+        "model": "Reviser 100M",
+        "evalppl_gpt2_large": 30.6355,
+        "evalppl_dream_7b": 22.6693
+      },
+      {
+        "model": "SEDD Small 169M",
+        "evalppl_gpt2_large": 158.7165,
+        "evalppl_dream_7b": 117.0477
+      },
+      {
+        "model": "MDLM 170M",
+        "evalppl_gpt2_large": 144.6948,
+        "evalppl_dream_7b": 94.3026
+      },
+      {
+        "model": "Reviser 300M",
+        "evalppl_gpt2_large": 17.7700,
+        "evalppl_dream_7b": 15.7733
+      },
+      {
+        "model": "SEDD Absorb 353M",
+        "evalppl_gpt2_large": 98.6821,
+        "evalppl_dream_7b": 83.2764
+      }
+    ]
+  },
+  "notes": [
+    "MDLM 300M is omitted because no comparable checkpoint is available in this setup."
+  ]
+}

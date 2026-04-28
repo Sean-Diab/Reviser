@@ -1,0 +1,15 @@
+# AR baseline checkpoints are expected as local files.
+# Place AR 100M weights at checkpoints/ar_100m.pt or edit this path.
+model:
+  name: ar_100m
+  family: ar
+  checkpoint: checkpoints/ar_100m.pt
+data:
+  prompt_prefix_tokens: 35
+  dataset: c4_v2
+decoding:
+  temperature: 0.9
+  top_k: 50
+  total_max_actions: 256
+evaluation:
+  scorer: gpt2_base

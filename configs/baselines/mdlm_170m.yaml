@@ -1,0 +1,11 @@
+# MDLM checkpoint identifier/path is configured locally.
+# Set this to your local checkpoint path or model identifier for MDLM (~170M).
+model:
+  name: mdlm_170m
+  family: mdlm
+  checkpoint: checkpoints/mdlm_170m
+data:
+  prompt_prefix_tokens: 35
+  dataset: c4_v2
+evaluation:
+  steps: 128

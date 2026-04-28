@@ -1,0 +1,17 @@
+name: reviser-paper
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pytorch
+  - pytorch-cuda
+  - numpy
+  - pip
+  - pyyaml
+  - tqdm
+  - pip:
+      - transformers==4.51.3
+      - sentencepiece
+      - latexmk

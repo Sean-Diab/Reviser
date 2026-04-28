@@ -1,0 +1,6 @@
+$pdf_mode = 1;
+$pdflatex = 'xelatex -synctex=1 -interaction=nonstopmode -file-line-error %O %S';
+$bibtex = 'bibtex %O %B';
+$max_repeat = 5;
+$silent = 0;
+@generated_exts = qw(aux bbl blg fls fdb_latexmk toc synctex.gz out);

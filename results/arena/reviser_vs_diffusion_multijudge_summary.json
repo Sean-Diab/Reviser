@@ -1,0 +1,29 @@
+﻿{
+  "created_at": "2026-04-24T00:00:00Z",
+  "dataset": "C4 continuation benchmark (English validation split)",
+  "judge": "Skywork-Critic-8B",
+  "n_examples_per_comparison": 3000,
+  "comparisons": [
+    {
+      "baseline": "SEDD Small",
+      "baseline_size": "169M",
+      "reviser_win_rate": 0.8593,
+      "baseline_win_rate": 0.1407
+    },
+    {
+      "baseline": "SEDD Absorb",
+      "baseline_size": "353M",
+      "reviser_win_rate": 0.6847,
+      "baseline_win_rate": 0.3153
+    },
+    {
+      "baseline": "MDLM",
+      "baseline_size": "170M",
+      "reviser_win_rate": 0.7833,
+      "baseline_win_rate": 0.2167
+    }
+  ],
+  "notes": [
+    "MDLM 300M is omitted because no comparable checkpoint is available in this setup."
+  ]
+}

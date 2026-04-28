@@ -1,0 +1,46 @@
+﻿{
+  "protocol": "Shared C4 MAUVE with BERT pseudo-loglikelihood features",
+  "settings": {
+    "n_examples": 3000,
+    "truncation_tokens": 100,
+    "bert_model_id": "bert-large-uncased"
+  },
+  "results": [
+    {
+      "model": "AR Baseline 100M",
+      "mauve": 0.9038
+    },
+    {
+      "model": "AR Baseline 300M",
+      "mauve": 0.9103
+    },
+    {
+      "model": "Reviser 300M",
+      "mauve": 0.9349
+    },
+    {
+      "model": "GPT-2 117M",
+      "mauve": 0.8770
+    },
+    {
+      "model": "GPT-2 Medium 345M",
+      "mauve": 0.8230
+    },
+    {
+      "model": "Reviser 100M",
+      "mauve": 0.8392
+    },
+    {
+      "model": "SEDD Absorb 353M",
+      "mauve": 0.3594
+    },
+    {
+      "model": "SEDD Small 169M",
+      "mauve": 0.1798
+    },
+    {
+      "model": "MDLM 170M",
+      "mauve": 0.1509
+    }
+  ]
+}

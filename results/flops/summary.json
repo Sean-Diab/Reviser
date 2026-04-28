@@ -1,0 +1,7 @@
+{
+  "status": "placeholder_public_release",
+  "notes": [
+    "This directory is reserved for released FLOPs/accounting summaries.",
+    "Use scripts/eval/run_flops_accounting.py to regenerate a paper-facing artifact."
+  ]
+}

@@ -1,0 +1,11 @@
+# SEDD checkpoint identifier/path is configured locally.
+# Set this to your local checkpoint path or model identifier for SEDD small (~169M).
+model:
+  name: sedd_small_169m
+  family: sedd
+  checkpoint: checkpoints/sedd_small_169m
+data:
+  prompt_prefix_tokens: 35
+  dataset: c4_v2
+evaluation:
+  steps: 128

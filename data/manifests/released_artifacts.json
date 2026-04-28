@@ -1,0 +1,24 @@
+{
+  "results": [
+    {
+      "artifact": "results/arena/reviser_vs_diffusion_multijudge_summary.json",
+      "kind": "arena_summary"
+    },
+    {
+      "artifact": "results/arena/ar_benchmark_v3_summary.json",
+      "kind": "arena_summary"
+    },
+    {
+      "artifact": "results/evalppl/gpt2base_evalppl_dream3k_summary.json",
+      "kind": "evalppl_summary"
+    },
+    {
+      "artifact": "results/mauve/bert_pseudologlik_mauve_3000.json",
+      "kind": "mauve_summary"
+    },
+    {
+      "artifact": "results/trajectory_stats/bpc_suite_3k.json",
+      "kind": "trajectory_summary"
+    }
+  ]
+}

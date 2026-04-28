@@ -1,0 +1,57 @@
+﻿{
+  "dataset": "C4 continuation benchmark (English validation split)",
+  "n_examples": 3000,
+  "metric": "Reviser trajectory diagnostics in decoding",
+  "rows": [
+    {
+      "statistic": "Actions per output token",
+      "reviser_100m": 1.51,
+      "reviser_300m": 1.40
+    },
+    {
+      "statistic": "Insert fraction",
+      "reviser_100m": 0.67,
+      "reviser_300m": 0.72
+    },
+    {
+      "statistic": "Move fraction",
+      "reviser_100m": 0.33,
+      "reviser_300m": 0.28
+    },
+    {
+      "statistic": "Mean absolute move distance",
+      "reviser_100m": 4.92,
+      "reviser_300m": 6.05
+    },
+    {
+      "statistic": "Move-distance mass on 1/2/4/8 moves",
+      "reviser_100m": [40.5, 23.3, 15.8, 10.0],
+      "reviser_300m": [37.4, 22.7, 15.5, 11.1]
+    },
+    {
+      "statistic": "Fraction backward moves",
+      "reviser_100m": 0.655,
+      "reviser_300m": 0.645
+    },
+    {
+      "statistic": "Mean insertion relative position",
+      "reviser_100m": 0.41,
+      "reviser_300m": 0.42
+    },
+    {
+      "statistic": "Fraction end-appends (cursor at end)",
+      "reviser_100m": 0.039,
+      "reviser_300m": 0.031
+    },
+    {
+      "statistic": "Fraction non end-appends",
+      "reviser_100m": 0.961,
+      "reviser_300m": 0.969
+    },
+    {
+      "statistic": "Examples with >=1 backward revision",
+      "reviser_100m": 1.0,
+      "reviser_300m": 1.0
+    }
+  ]
+}

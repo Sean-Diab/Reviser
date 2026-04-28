@@ -1,0 +1,11 @@
+# SEDD checkpoint identifier/path is configured locally.
+# Set this to your local checkpoint path or model identifier for SEDD absorb (~353M).
+model:
+  name: sedd_absorb_353m
+  family: sedd
+  checkpoint: checkpoints/sedd_absorb_353m
+data:
+  prompt_prefix_tokens: 35
+  dataset: c4_v2
+evaluation:
+  steps: 128

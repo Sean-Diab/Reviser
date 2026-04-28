@@ -1,0 +1,10 @@
+{
+  "name": "c4_v2_eval_prompts",
+  "dataset": "allenai/c4",
+  "split": "validation",
+  "prompt_prefix_tokens": 35,
+  "notes": [
+    "Public repo release manifest for paper-facing continuation prompts.",
+    "Exact large prompt pools are not bundled in full here; released summaries and scripts expect user-managed local data."
+  ]
+}
