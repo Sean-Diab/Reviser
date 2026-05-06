@@ -8,6 +8,7 @@ This release is organized around deterministic scripts, released configs, and co
   https://github.com/Sean-Diab/Reviser
 - Hugging Face checkpoints (Reviser 100M and 300M):  
   https://huggingface.co/sean-diab/reviser-checkpoints
+- Matched AR baseline checkpoints: available upon reasonable request.
 
 ## Environment
 
