@@ -12,5 +12,5 @@ results/**/*.htm linguist-generated=true
 results/**/*.json linguist-generated=true
 results/**/*.jsonl linguist-generated=true
 
-# Keep paper source counted as TeX (small share is expected)
-paper/**/*.tex linguist-language=TeX
+# Exclude paper TeX from language stats so repository language mix reflects code.
+paper/**/*.tex linguist-vendored=true
