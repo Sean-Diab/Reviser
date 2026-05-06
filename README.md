@@ -44,6 +44,8 @@ Reviser model parameters are hosted on Hugging Face: - https://huggingface.co/se
 
 Download and place them into a local `checkpoints/` directory, then point configs at: - `checkpoints/reviser_100m.pt` - `checkpoints/reviser_300m.pt`
 
+Matched AR baseline checkpoints are not publicly mirrored; they are available upon reasonable request.
+
 Build the paper:
 
 ``` bash
