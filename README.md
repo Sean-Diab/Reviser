@@ -12,7 +12,7 @@ Headline results in the current release: - Reviser strongly outperforms SEDD and
 
 ## Repository Layout
 
--   `paper/`: LaTeX paper source and paper provenance files
+-   `paper/`: LaTeX source for the [published paper](https://arxiv.org/abs/2609.20830), plus paper provenance files
 -   `src/`: public Python package for Reviser and baseline wrappers
 -   `configs/`: released model and evaluation configs
 -   `scripts/`: canonical CLI entrypoints for training, inference, evaluation, paper export, and release packaging
@@ -48,7 +48,9 @@ Download and place them into a local `checkpoints/` directory, then point config
 
 Matched AR baseline checkpoints are not publicly mirrored; they are available upon reasonable request.
 
-Build the paper:
+Read the paper: [arXiv abstract](https://arxiv.org/abs/2609.20830) · [PDF](https://arxiv.org/pdf/2609.20830)
+
+Build the paper from source:
 
 ``` bash
 cd paper
@@ -77,9 +79,12 @@ The code in this repository is released under the MIT license. Model checkpoints
 
 ``` bibtex
 @misc{diab2026reviser,
-  title        = {Reviser: Revision-Capable Text Generation via Autoregressive Cursor Actions},
-  author       = {Sean Diab},
-  year         = {2026},
-  note         = {Manuscript and accompanying code release}
+  title          = {Reviser: Revision-Capable Text Generation via Autoregressive Cursor Actions},
+  author         = {Sean Diab},
+  year           = {2026},
+  eprint         = {2609.20830},
+  archivePrefix  = {arXiv},
+  primaryClass   = {cs.CL},
+  url            = {https://arxiv.org/abs/2609.20830}
 }
 ```
