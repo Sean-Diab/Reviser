@@ -2,6 +2,8 @@
 
 Reviser is a decoder-only language model that generates text through cursor actions on a mutable canvas rather than standard left-to-right token emission. The public repository bundles the paper source, released configs, canonical training and evaluation entrypoints, compact paper-facing result artifacts, and reproducibility notes for the experiments reported in the paper.
 
+**Paper:** [arXiv:2609.20830](https://arxiv.org/abs/2609.20830)
+
 ![Reviser demo](visualizations/reviser_edit_demo.gif) *Editing trajectory demo from a real Reviser response: the canvas is incrementally revised via cursor actions.*
 
 Full interactive visualizations are available in [`visualizations/`](visualizations/).
