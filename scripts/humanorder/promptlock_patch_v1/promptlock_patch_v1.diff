@@ -1,0 +1,257 @@
+--- a/reviser/training/pretrain_resttraj.py
++++ b/reviser/training/pretrain_resttraj.py
+@@ -60,9 +60,63 @@
+     generate_from_action_prefix,
+ )
+ from reviser.data.vocabulary import SPECIAL_TOKENS, is_move_token, is_insert_token  # noqa: E402
++from reviser.data.vocabulary import get_all_move_token_ids, get_move_amount  # noqa: E402  [promptlock_patch_v1]
+ from training_metrics_dashboard import append_metric_row, maybe_update_dashboard  # noqa: E402
+ 
+ 
++# ---------------------------------------------------------------------------------------------------------------
++# [promptlock_patch_v1] training-time legality mask with the prompt locked (config: training.legality_mask, default
++# false = the July-control trainer unchanged). Before the CE (train and dev), at every position whose state is
++# (cursor, canvas_len) with prompt length P (= the collator's prefix_lens):
++#   MOVE amt  -> -inf  if cursor + amt < P  or  cursor + amt > canvas_len   (moving exactly to P stays legal)
++#   DELETE    -> -inf  if cursor <= P                                       (DELETE pops the token left of cursor)
++# Inserts and END_OF_RESPONSE are never masked, so every row keeps finite logits. A gold label that the mask
++# forbids would give an infinite loss: it is counted, logged and raises (never trained on silently).
++# ---------------------------------------------------------------------------------------------------------------
++_PL_DELETE = int(SPECIAL_TOKENS.delete)                       # 50259
++_PL_MOVE_IDS = [int(x) for x in get_all_move_token_ids()]     # 50261..50280: +1,-1,+2,-2,...,+512,-512
++_PL_MOVE_AMTS = [int(get_move_amount(x)) for x in _PL_MOVE_IDS]
++_PL_LO = _PL_DELETE                                           # masked column block [_PL_LO, _PL_HI)
++_PL_HI = max(_PL_MOVE_IDS) + 1
++assert _PL_MOVE_IDS == list(range(_PL_MOVE_IDS[0], _PL_HI)) and _PL_MOVE_IDS[0] == _PL_DELETE + 2
++
++
++def _promptlock_illegal_block(cursor: torch.Tensor, canvas_len: torch.Tensor, prefix_lens: torch.Tensor) -> torch.Tensor:
++    """(B,S,_PL_HI-_PL_LO) bool: True = action column illegal at that position (block starts at DELETE id)."""
++    amts = torch.tensor(_PL_MOVE_AMTS, dtype=torch.long, device=cursor.device)
++    new = cursor.unsqueeze(-1) + amts                                  # (B,S,20)
++    p = prefix_lens.to(cursor.device).long().view(-1, 1, 1)
++    ill_mv = (new < p) | (new > canvas_len.unsqueeze(-1))
++    ill_del = cursor <= p[:, :, 0]                                     # (B,S)
++    blk = torch.zeros(cursor.shape + (_PL_HI - _PL_LO,), dtype=torch.bool, device=cursor.device)
++    blk[..., 0] = ill_del
++    blk[..., _PL_MOVE_IDS[0] - _PL_LO:] = ill_mv
++    return blk
++
++
++def _promptlock_mask_logits(logits: torch.Tensor, labels: torch.Tensor, batch: Dict[str, Any], *, where: str):
++    """Return (masked logits, labels_checked, illegal_labels). Raises on any illegal gold label."""
++    cur, ln, pl = batch["legal_cursor"], batch["legal_canvas_len"], batch["prefix_lens"]
++    blk = _promptlock_illegal_block(cur, ln, pl)
++    valid = labels != -100
++    in_blk = valid & (labels >= _PL_LO) & (labels < _PL_HI)
++    idx = (labels - _PL_LO).clamp(0, _PL_HI - _PL_LO - 1).unsqueeze(-1)
++    bad = in_blk & blk.gather(-1, idx).squeeze(-1)
++    n_bad = int(bad.sum().item())
++    n_checked = int(valid.sum().item())
++    if n_bad:
++        pos = bad.nonzero()[:10].tolist()
++        det = [{"row": b, "t": t, "label": int(labels[b, t]), "cursor": int(cur[b, t]), "canvas_len": int(ln[b, t]),
++                "prefix_len": int(pl[b])} for b, t in pos]
++        print(f"[promptlock] FATAL {where}: {n_bad} gold label(s) illegal under the legality mask "
++              f"(of {n_checked} labels); first: {det}", flush=True)
++        raise RuntimeError(f"[promptlock] {n_bad} illegal gold labels in a {where} batch; refusing to train on an "
++                           f"infinite loss (see log)")
++    out = logits.clone()
++    out[..., _PL_LO:_PL_HI].masked_fill_(blk, float("-inf"))
++    return out, n_checked, n_bad
++
++
+ class _TeeStream:
+     def __init__(self, *streams):
+         self.streams = streams
+@@ -915,6 +969,7 @@
+     use_amp: bool,
+     dtype: torch.dtype,
+     max_batches: int,
++    legality_mask: bool = False,
+ ) -> DevEvalStats:
+     model_was_training = model.training
+     model.eval()
+@@ -940,6 +995,8 @@
+                 labels=None,
+             )
+             logits = out["logits"]
++            if legality_mask:  # [promptlock_patch_v1]
++                logits, _, _ = _promptlock_mask_logits(logits, labels, batch, where="dev")
+ 
+         flat_logits = logits.view(-1, model.config.vocab_size)
+         flat_labels = labels.view(-1)
+@@ -1015,6 +1072,12 @@
+     tok = CursorTokenizer()
+     pad_id = int(tok.pad_token_id)
+ 
++    # [promptlock_patch_v1] optional training-time legality mask with the prompt locked (default off)
++    legality_mask = bool(cfg.get("training", {}).get("legality_mask", False))
++    if legality_mask:
++        print("[promptlock] training.legality_mask=true: before CE (train+dev) MOVE to < prefix_len or > canvas_len "
++              "and DELETE at cursor <= prefix_len get -inf; an illegal gold label raises", flush=True)
++
+     resttraj_dir = Path(cfg["data"]["resttraj_dir"]).expanduser().resolve()
+     train_dataset_state = _load_dataset_state(resttraj_dir)
+     max_seq_len = int(cfg["data"]["max_seq_length"])
+@@ -1056,6 +1119,7 @@
+         fixed_prefix_length=train_fixed_prefix_length,
+         infer_prefix_length=train_infer_prefix_length,
+         prefix_length_max=train_prefix_length_max,
++        legality_state=legality_mask,  # [promptlock_patch_v1]
+     )
+     # Dataset yields pre-batched lists; DataLoader must not auto-batch.
+     num_workers = int(cfg.get("training", {}).get("num_workers", 0) or 0)
+@@ -1109,6 +1173,7 @@
+             fixed_prefix_length=dev_fixed_prefix_length,
+             infer_prefix_length=dev_infer_prefix_length,
+             prefix_length_max=dev_prefix_length_max,
++            legality_state=legality_mask,  # [promptlock_patch_v1]
+         )
+         dev_dl = _build_resttraj_dataloader(
+             dataset=dev_dataset,
+@@ -1331,6 +1396,10 @@
+         print(f"[july_control] stop_at_tokens_processed={stop_at_tokens} snapshot_at_steps={sorted(snapshot_steps)} "
+               f"snapshot_at_tokens={snapshot_tokens}", flush=True)
+ 
++    pl_labels_checked = 0  # [promptlock_patch_v1] counters (only advanced when training.legality_mask is on)
++    pl_batches = 0
++    pl_nonfinite = 0
++
+     prefetch_to_device = bool(cfg.get("training", {}).get("prefetch_to_device", True))
+     data_iter = _prefetch_loader_to_cuda(dl, device) if (prefetch_to_device and device.type == "cuda") else dl
+     timed_batches = _timed_iter(iter(data_iter))
+@@ -1379,6 +1448,10 @@
+                         labels=None,
+                     )
+                     logits = out["logits"]
++                    if legality_mask:  # [promptlock_patch_v1] (raises on an illegal gold label)
++                        logits, _pl_n, _ = _promptlock_mask_logits(logits, labels, batch, where="train")
++                        pl_labels_checked += _pl_n
++                        pl_batches += 1
+                     flat_labels = labels.view(-1)
+                     valid_labels = flat_labels != -100
+                     valid_label_tokens = int(valid_labels.sum().item())
+@@ -1386,6 +1459,10 @@
+                         loss_fp32 = F.cross_entropy(logits.view(-1, model.config.vocab_size), flat_labels, ignore_index=-100)
+                     else:
+                         loss_fp32 = logits.new_tensor(0.0)
++                    if legality_mask and not bool(torch.isfinite(loss_fp32).item()):  # [promptlock_patch_v1]
++                        pl_nonfinite += 1
++                        print(f"[promptlock] WARNING non-finite train loss {float(loss_fp32.item())} at step={state.step} "
++                              f"(no illegal labels; count={pl_nonfinite})", flush=True)
+                 if do_gpu_sample and fwd1 is not None:
+                     fwd1.record()
+             except torch.OutOfMemoryError as e:
+@@ -1487,6 +1564,9 @@
+                     f"Toks/sec: {toks_per_s:,.0f} | LabelToks: {window_label_tokens}",
+                     flush=True,
+                 )
++                if legality_mask:  # [promptlock_patch_v1]
++                    print(f"[promptlock] step={state.step} batches={pl_batches} labels_checked={pl_labels_checked} "
++                          f"illegal_labels=0 nonfinite_losses={pl_nonfinite}", flush=True)
+                 if metrics_enabled:
+                     append_metric_row(
+                         csv_path=metrics_csv,
+@@ -1554,6 +1634,7 @@
+                         use_amp=use_amp,
+                         dtype=dtype,
+                         max_batches=int(dev_eval_max_batches),
++                        legality_mask=legality_mask,  # [promptlock_patch_v1]
+                     )
+                     print(
+                         f"[dev_eval] step={state.step} batches={dev_stats.batches} label_tokens={dev_stats.label_tokens} "
+@@ -1633,6 +1714,9 @@
+     if int(state.step) > 0 and (int(state.tokens_processed) != int(last_ckpt_tokens) or stop_at_tokens):
+         tw_ckpt_ms += float(save_latest(force_snapshot=True))
+ 
++    if legality_mask:  # [promptlock_patch_v1]
++        print(f"[promptlock] final: batches={pl_batches} labels_checked={pl_labels_checked} illegal_labels=0 "
++              f"nonfinite_losses={pl_nonfinite}", flush=True)
+     print(f"[pretrain_resttraj] finished at epoch={state.epoch} step={state.step} total_steps={total_steps}", flush=True)
+ 
+ 
+--- a/reviser/data/resttraj_pretrain_collator.py
++++ b/reviser/data/resttraj_pretrain_collator.py
+@@ -63,6 +63,34 @@
+     return max(0, min(int(prefix_len), len(action_ids)))
+ 
+ 
++def cursor_state_before_actions(action_ids: List[int]) -> tuple[List[int], List[int]]:
++    """[promptlock_patch_v1] (cursor, canvas_len) BEFORE each action (state after action_ids[:t]).
++
++    Executor semantics are exactly those of `_build_canvas_rows` below (and of the July trainer's CursorState for
++    legal actions): insert at the cursor (cursor += 1), DELETE pops the token left of the cursor (no-op at 0),
++    moves clamp to [0, len]. Position t of the batch predicts label action_ids[t] from this state.
++    """
++    delete_id = int(SPECIAL_TOKENS.delete)
++    cur = 0
++    n = 0
++    curs: List[int] = []
++    lens: List[int] = []
++    for token_id in action_ids:
++        tid = int(token_id)
++        curs.append(cur)
++        lens.append(n)
++        if tid == delete_id:
++            if cur > 0:
++                cur -= 1
++                n -= 1
++        elif is_move_token(tid):
++            cur = max(0, min(n, cur + int(get_move_amount(tid))))
++        elif is_insert_token(tid):
++            n += 1
++            cur += 1
++    return curs, lens
++
++
+ def _build_canvas_rows(action_ids: List[int], max_canvas_length: int) -> List[List[int]]:
+     canvas: List[int] = []
+     cursor_pos = 0
+@@ -102,6 +130,7 @@
+         fixed_prefix_length: Optional[int] = None,
+         infer_prefix_length: bool = False,
+         prefix_length_max: Optional[int] = None,
++        legality_state: bool = False,
+     ) -> None:
+         self.pad_token_id = int(pad_token_id)
+         self.max_seq_length = int(max_seq_length)
+@@ -110,6 +139,9 @@
+         self.fixed_prefix_length = None if fixed_prefix_length is None else int(fixed_prefix_length)
+         self.infer_prefix_length = bool(infer_prefix_length)
+         self.prefix_length_max = None if prefix_length_max is None else int(prefix_length_max)
++        # [promptlock_patch_v1] also emit per-position cursor / canvas length (training.legality_mask). Off by
++        # default: the batch is then exactly the lossmask_patch_v1 batch (same keys, same tensors).
++        self.legality_state = bool(legality_state)
+ 
+     def __call__(self, batch: List[Dict[str, Any]] | Dict[str, Any]) -> Dict[str, torch.Tensor]:
+         collate_t0 = time.perf_counter()
+@@ -161,6 +193,8 @@
+                 canvas_t0 = time.perf_counter()
+                 record["canvas_rows"] = _build_canvas_rows(actions, max(1, self.max_canvas_length))
+                 canvas_ms += (time.perf_counter() - canvas_t0) * 1e3
++            if self.legality_state:  # [promptlock_patch_v1]
++                record["cursor"], record["canvas_len"] = cursor_state_before_actions(actions)
+             processed.append(record)
+ 
+         if not processed:
+@@ -179,6 +213,9 @@
+             "attention_mask": attention_mask,
+             "prefix_lens": torch.zeros((batch_size,), dtype=torch.long),
+         }
++        if self.legality_state:  # [promptlock_patch_v1] padding positions: cursor 0, len 0 (labels are -100 there)
++            output["legal_cursor"] = torch.zeros((batch_size, max_seq_len), dtype=torch.long)
++            output["legal_canvas_len"] = torch.zeros((batch_size, max_seq_len), dtype=torch.long)
+ 
+         if self.use_canvas:
+             max_canvas_len = max(
+@@ -199,6 +236,9 @@
+             output["labels"][i, :seq_len] = torch.tensor(item["labels"], dtype=torch.long)
+             output["attention_mask"][i, :seq_len] = 1
+             output["prefix_lens"][i] = int(item["prefix_len"])
++            if self.legality_state:  # [promptlock_patch_v1]
++                output["legal_cursor"][i, :seq_len] = torch.tensor(item["cursor"], dtype=torch.long)
++                output["legal_canvas_len"][i, :seq_len] = torch.tensor(item["canvas_len"], dtype=torch.long)
+ 
+             if self.use_canvas:
+                 for t, row in enumerate(item["canvas_rows"][:seq_len]):

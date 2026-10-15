@@ -1,0 +1,1 @@
+{"name": "rd2_12", "description": "Original random obfuscation-restoration (reversed walk 0.70 delete / 0.18 move / 0.12 junk insert), junk inserts masked (D2 style)", "order": {"source": "restoration", "p_del": 0.70, "p_move": 0.18, "p_ins": 0.12, "mask": true}, "errors": null, "seed": 123}

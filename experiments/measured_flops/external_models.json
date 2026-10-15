@@ -1,0 +1,11 @@
+{
+ "_note": "Pinned external checkpoints for task 41 (anonymous HF downloads; verified 2026-09-24 via the HF API; licenses per the model cards). Code: github.com/kuleshov-group/bd3lms @ 1c3e8f43d88dfbcee5ff2aa6932a9e74b31ae1d7 (Apache-2.0).",
+ "owt_family": {
+  "ar-noeos-owt": {"repo": "kuleshov-group/ar-noeos-owt", "revision": "4057bcd0ad88290ab1602b838a1b2744fddb953b", "license": "apache-2.0"},
+  "mdlm-owt-noeos": {"repo": "kuleshov-group/mdlm-owt-noeos", "revision": "b9613c3c54da477d198c998e767ac3647e01225b", "license": "apache-2.0"},
+  "sedd-noeos-owt": {"repo": "kuleshov-group/sedd-noeos-owt", "revision": "96e01180f8b5eb37515bc052911f0c05dd7e54f4", "license": "apache-2.0"},
+  "bd3lm-owt-block_size4": {"repo": "kuleshov-group/bd3lm-owt-block_size4", "revision": "6c644588fb54b81052e5bb9f059408a16d6d63ec", "license": "apache-2.0"},
+  "bd3lm-owt-block_size16": {"repo": "kuleshov-group/bd3lm-owt-block_size16", "revision": "70129eacd09fe73158c81e46e9f4041d1c521ef6", "license": "apache-2.0"}
+ },
+ "scorer": {"gpt2-large": {"repo": "gpt2-large", "note": "already in data/hf_cache (used by earlier continuation metrics)"}}
+}

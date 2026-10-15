@@ -1,0 +1,1 @@
+{"name": "rctl", "description": "Random obfuscation-restoration 0.8/0.2, no junk (rebuild of the control recipe; check only)", "order": {"source": "restoration", "p_del": 0.8, "p_move": 0.2, "p_ins": 0.0, "mask": false}, "errors": null, "seed": 123}

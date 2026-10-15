@@ -1,0 +1,59 @@
+# Overnight data-variant arm 'jd_g05_imm_m' (notes/overnight-data-variants-2026-10-07.md; spec configs/humanorder/overnight/jd_g05_imm_m.json).
+# Copy of configs/humanorder/train_q_textmatched_100m.yaml with ONLY data.resttraj_dir changed (the Q header below is
+# kept verbatim; stop_at_tokens_processed 83,866,148, torch_seed 123 and everything else unchanged).
+# Human-order Q arm (notes/human-order-plan-2026-10-07.md): a copy of
+# experiments/july_control/configs/train_control_textmatched_100m.yaml with ONLY data.resttraj_dir and
+# training.stop_at_tokens_processed changed (torch_seed 123 unchanged). Data: q_textmatched_v1 (run-and-jump
+# order fitted to CoAuthor human writing order, data/humanorder/q_dials_v1.json) over the same 2,640,539 texts.
+# PRIMARY control (Design M): original inverse-corruption trajectories of exactly the July texts
+# Generated from code/july_impl/train_runjump_100m.yaml (sha256 in manifests/code_manifest.json);
+# only data.resttraj_dir differs from the July config, plus the documented july_control additions.
+model:
+  vocab_size: 50291
+  d_model: 512
+  n_heads: 8
+  d_ff: 2048
+  n_layers: 24
+  dropout: 0.1
+  attention_dropout: 0.1
+  positional_encoding: rope
+  tie_embeddings: true
+
+data:
+  resttraj_dir: /root/rv2/hq/data/ov_jd_g05_imm_m
+  dataset_type: raining_bucketed
+  max_seq_length: 512
+  max_canvas_length: 512
+  use_canvas: false
+  min_traj_len: 100
+  max_traj_len: 350
+  bucket_size: 5
+  seed: 123
+  refresh_secs: 60
+
+training:
+  batch_size: 8
+  gradient_accumulation: 4
+  learning_rate: 2.0e-5
+  min_learning_rate: 2.0e-6
+  weight_decay: 0.1
+  warmup_ratio: 0.02
+  total_tokens: 2000000000
+  num_workers: 2
+  prefetch_factor: 2
+  pin_memory: true
+  log_every_steps: 20
+  checkpoint_interval_secs: 1800
+  inference_interval_secs: 900
+  inference_n_examples: 2
+  inference_max_new_actions: 120
+  inference_fixed_prefix_length: 35
+  # ---- july_control additions (require patches/pretrain_resttraj.patched.py; do not change the training math) ----
+  stop_at_tokens_processed: 83866148       # Q: July step 11,656 tokens_processed (84M budget)
+  snapshot_at_steps: [84488]               # also keep a step-matched checkpoint (same LR-schedule position)
+  snapshot_at_tokens: [17757912, 83866148, 291313242]   # July ckpt token counts (steps 2467 / 11656 / 40445)
+  checkpoint_write_step_snapshots: false   # time-based saves only refresh checkpoint_latest.pt (disk)
+  torch_seed: 123                          # July left torch unseeded (dropout RNG); seeded here for re-runs
+
+hardware:
+  precision_type: float16

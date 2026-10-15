@@ -1,0 +1,1 @@
+{"name": "rd2_06", "description": "Random obfuscation-restoration 0.75/0.19/0.06 (half junk), junk masked", "order": {"source": "restoration", "p_del": 0.752, "p_move": 0.188, "p_ins": 0.06, "mask": true}, "errors": null, "seed": 123}

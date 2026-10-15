@@ -1,0 +1,1 @@
+{"name": "n_t07", "description": "N cursor model orders sampled at temperature 0.7 (fewer surprising jumps than N's T=1)", "order": {"source": "orders", "npz": "data/humanorder/ov_orders/n_t07.npz"}, "errors": null, "seed": 123}

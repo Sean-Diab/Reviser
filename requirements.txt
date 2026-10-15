@@ -1,0 +1,23 @@
+# Versions we used: torch 2.6.0, transformers 5.13.0, numpy 2.2.6 (Linux, CUDA).
+torch>=2.4
+transformers>=4.45
+tokenizers
+numpy
+pyyaml
+huggingface_hub
+datasets
+pandas
+pyarrow
+tiktoken
+# evaluation
+mauve-text
+errant
+nltk
+sacrebleu
+rouge_score
+# optional: LLM drafts for the edit data (vllm), Haiku batches (anthropic), LoRA baselines (peft)
+vllm
+anthropic
+peft
+# tests
+pytest

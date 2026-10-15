@@ -1,18 +1,22 @@
 cff-version: 1.2.0
-message: "If you use this repository, please cite the Reviser manuscript."
-title: "Reviser: Revision-Capable Text Generation via Autoregressive Cursor Actions"
+message: "If you use this code or the checkpoints, please cite the paper."
+title: "Reviser: Writing and Editing Text with Autoregressive Cursor Actions"
 type: software
 authors:
   - family-names: Diab
     given-names: Sean
-repository-code: "https://github.com/Sean-Diab/Reviser.git"
-license: MIT
-date-released: 2026-04-22
+repository-code: "https://github.com/Sean-Diab/Reviser"
+url: "https://huggingface.co/sean-diab/reviser-checkpoints"
+license: Apache-2.0
+version: "2.0"
 preferred-citation:
   type: article
   authors:
     - family-names: Diab
       given-names: Sean
-  title: "Reviser: Revision-Capable Text Generation via Autoregressive Cursor Actions"
+  title: "Reviser: Writing and Editing Text with Autoregressive Cursor Actions"
   year: 2026
-  notes: "Manuscript and accompanying code release"
+  identifiers:
+    - type: other
+      value: "arXiv:2609.20830"
+  url: "https://arxiv.org/abs/2609.20830"

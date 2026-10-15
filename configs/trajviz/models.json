@@ -1,0 +1,190 @@
+{
+ "_doc": "Models for the trajectory check and viewer (notes/trajectory-check-2026-10-09.md). Part 1 rows point at existing prompt-locked paper-eval decodes (scripts/papereval/decode_batched.py, 3000 C4 prompts, seeds 123/124/125, T 0.9, top-k 50, 220 new actions); decode_unlocked is the same model decoded without the prompt lock (used only to count prompt edits); ckpt/ckpt_sha256 are the checkpoint those decodes were made from (checked against each decode's _meta). Part 2 rows are decoded by scripts/trajviz/edit_decode.py (type-greedy, the evaluate_edits settings). To add the 1B Reviser-Edit runs: append part2 rows with their checkpoint path, layout and saved-eval dir, then rerun edit_decode.py, edit_stats.py and build_viewer.py.",
+ "part1": [
+  {
+   "key": "ar100",
+   "label": "AR 100M (baseline)",
+   "decode": "runs/papereval/final/dec/c4paper3k.nolock.ar100.jsonl",
+   "ckpt": "data/checkpoints/historical/ar_100m_fineweb_step870982_model.pt",
+   "ckpt_sha256": "252aff006f82abd42c3642f12d84fb4f5485fbf17799fbd2d8d2c49fa12a1e36",
+   "kind": "ar",
+   "note": "Left-to-right reference: inserts only, no cursor. Decoded with the same decoder and budget (prompt lock has no effect on AR)."
+  },
+  {
+   "key": "rev100",
+   "label": "Released Reviser 100M (corrected)",
+   "decode": "runs/papereval/final/dec/c4paper3k.lock.rev100.jsonl",
+   "decode_unlocked": "runs/papereval/final/dec/c4paper3k.nolock.rev100.jsonl",
+   "ckpt": "runs/july_control/ckpt/reviser_100m_wrapped.pt",
+   "ckpt_sha256": "54dc8596df81b3bc5fab97268d57546223334f9de3253225aa46861c4079a29a",
+   "kind": "reviser",
+   "note": "Paper model (restoration trajectories, insert/move/stop). Prompt locked."
+  },
+  {
+   "key": "july608",
+   "label": "July recipe, 608M tokens",
+   "decode": "runs/papereval/final/dec/c4paper3k.lock.july608.jsonl",
+   "decode_unlocked": "runs/papereval/final/dec/c4paper3k.nolock.july608.jsonl",
+   "ckpt": "runs/july_control/ckpt/july_runjump_step84488_model.pt",
+   "ckpt_sha256": "0256464d733f524c1b3a73c2aac7631624d9305ab0f9237204852d23b63bd9a7",
+   "kind": "reviser",
+   "note": "Run-and-jump order, insert/move/stop, 608M tokens."
+  },
+  {
+   "key": "jd608",
+   "label": "Delete recipe, 608M, no RL",
+   "decode": "runs/big608/box/E/dec/c4paper3k.lock.jd608.jsonl",
+   "decode_unlocked": "runs/big608/box/E/dec/c4paper3k.nolock.jd608.jsonl",
+   "ckpt": "runs/big608/models/jd608_final_model.pt",
+   "ckpt_sha256": "641db09e231108be002461d41d914fa91ca567937e6f58e3224ac71ec6ab9342",
+   "kind": "reviser",
+   "note": "jd_n05_imm_m: July order plus 5% near-miss wrong words, deleted and retyped right away (masked)."
+  },
+  {
+   "key": "jd608_rl1",
+   "label": "Delete recipe, 608M + RL, seed 1",
+   "decode": "runs/big608/box/E/dec/c4paper3k.lock.jd608_g8m2_s1.jsonl",
+   "decode_unlocked": "runs/big608/box/E/dec/c4paper3k.nolock.jd608_g8m2_s1.jsonl",
+   "ckpt": "runs/big608/models/jd608_g8m2_s1_step200.pt",
+   "ckpt_sha256": "492bd8fe728edbf851592da5ee16dd448c30daf381477b473cda0c4b5c32d4b0",
+   "kind": "reviser",
+   "note": "GRPO g8m2 settings, 200 steps, from jd608."
+  },
+  {
+   "key": "jd608_rl2",
+   "label": "Delete recipe, 608M + RL, seed 2",
+   "decode": "runs/big608/box/E/dec/c4paper3k.lock.jd608_g8m2_s2.jsonl",
+   "decode_unlocked": "runs/big608/box/E/dec/c4paper3k.nolock.jd608_g8m2_s2.jsonl",
+   "ckpt": "runs/big608/models/jd608_g8m2_s2_step200.pt",
+   "ckpt_sha256": "9f5a753f78f16059040ad8be7d33e4d7814139e9dbef98121334059f387a5396",
+   "kind": "reviser",
+   "note": "GRPO g8m2 settings, 200 steps, from jd608."
+  },
+  {
+   "key": "jd608_rl3",
+   "label": "Delete recipe, 608M + RL, seed 3",
+   "decode": "runs/big608/box/E/dec/c4paper3k.lock.jd608_g8m2_s3.jsonl",
+   "decode_unlocked": "runs/big608/box/E/dec/c4paper3k.nolock.jd608_g8m2_s3.jsonl",
+   "ckpt": "runs/big608/models/jd608_g8m2_s3_step200.pt",
+   "ckpt_sha256": "ee9fe2f23284d91f807856be1f77086116219a26350d4896fff1b14586ae4891",
+   "kind": "reviser",
+   "note": "GRPO g8m2 settings, 200 steps, from jd608."
+  }
+ ],
+ "part2": [
+  {
+   "key": "edit300",
+   "label": "Edit 300M, 300M tokens",
+   "ckpt": "runs/trajviz/ckpt/ev2-main300-s1.pt",
+   "ckpt_sha256": "8a79e473b7f0567b09bc5417e7632cf5b512e30d8578e4efa4c57da809c04fe2",
+   "layout": "edit",
+   "saved_eval": "runs/ev2-main300-s1/eval",
+   "note": "Reviser-Edit v2 main mix, task tokens."
+  },
+  {
+   "key": "edit100",
+   "label": "Edit 100M, 300M tokens",
+   "ckpt": "runs/trajviz/ckpt/ev2-main100-s1.pt",
+   "ckpt_sha256": "8c42cb9b19b979bde6864ee141ed8c58cb88ed63b633858846fec8ceb1b64596",
+   "layout": "edit",
+   "saved_eval": "runs/ev2-main100-s1/eval",
+   "note": "Reviser-Edit v2 main mix, task tokens."
+  },
+  {
+   "key": "ar300e",
+   "label": "AR 300M, 300M tokens",
+   "ckpt": "runs/trajviz/ckpt/ev2-ar300-s1.pt",
+   "ckpt_sha256": "92bf9e217994a2a23fbd1e543da7232b1fdea4869ea416730d9df39b802b4c90",
+   "layout": "ar",
+   "saved_eval": "runs/ev2-ar300-s1/eval",
+   "note": "Same data and order as edit 300M, AR layout: retypes the whole text, no cursor."
+  },
+  {
+   "key": "ar100e",
+   "label": "AR 100M, 300M tokens",
+   "ckpt": "runs/trajviz/ckpt/ev2-ar100-s1.pt",
+   "ckpt_sha256": "1cda4892da8b45fac7ef04de6a10b811039e1912ce2df90bc9bbba8a0ad73337",
+   "layout": "ar",
+   "saved_eval": "runs/ev2-ar100-s1/eval",
+   "note": "Same data and order as edit 100M, AR layout."
+  },
+  {
+   "key": "sept_d4",
+   "label": "September edit 300M (D4)",
+   "ckpt": "runs/slim/re300-d4-s1/ckpt/latest.pt",
+   "ckpt_sha256": "8decbffe75652638ce2e22611047865c06532fa82c08bfceba1bffed0f623bcf",
+   "layout": "edit",
+   "saved_eval": "runs/re300-d4-s1/eval",
+   "note": "September D4 recipe (40% restoration, 20% synthetic repair, 40% real pairs), no task tokens."
+  },
+  {
+   "key": "edit100v3",
+   "label": "Reviser-Edit 100M (v3, 3 passes)",
+   "ckpt": "runs/trajviz/ckpt/ev3-main100-s1.pt",
+   "ckpt_sha256": "f9832f2834bd8a06c678de10e8f8e04275ffa0e722bece572dd06613d61f4f0e",
+   "layout": "edit",
+   "saved_eval": "runs/edit_seed1_100m/runs/ev3-main100-s1/keep/pass3/eval",
+   "note": "Paper Table 5 model, seed 1: final full-state checkpoint, step 187797 (same step as keep/pass3, whose eval is the saved one). Task tokens."
+  },
+  {
+   "key": "ar100v3",
+   "label": "AR rewriter 100M (v3, 3 passes)",
+   "ckpt": "runs/trajviz/ckpt/ev3-ar100-s1.pt",
+   "ckpt_sha256": "69e278dca84fcea098ff9736605150676bdf312d7e0df4f33f4f9c066bd5f0bb",
+   "layout": "ar",
+   "saved_eval": "runs/edit_seed1_100m/runs/ev3-ar100-s1/keep/pass3/eval",
+   "note": "Paper Table 5 AR baseline, seed 1: same data and order as edit100v3, AR layout (retypes the whole text). Final checkpoint, step 187797."
+  },
+  {
+   "key": "edit300v3",
+   "label": "Reviser-Edit 300M (v3, 3 passes)",
+   "ckpt": "runs/trajviz/ckpt/ev3-main300-s1.pt",
+   "ckpt_sha256": "29395d2e70059ac07b0171bd1b8aa97cc217d51cbf290f5d25a0fcfe3478902d",
+   "layout": "edit",
+   "saved_eval": "runs/edit_seed1_300m/runs/ev3-main300-s1/keep/pass3/eval",
+   "note": "Paper Table 5 model, seed 1: final full-state checkpoint, step 187797. Task tokens."
+  },
+  {
+   "key": "ar300v3",
+   "label": "AR rewriter 300M (v3, 3 passes)",
+   "ckpt": "runs/trajviz/ckpt/ev3-ar300-s1.pt",
+   "ckpt_sha256": "26bd92d3ea81a016e613bf10c4f5b54bc4e8c76f97a92180763951dfc5b3a604",
+   "layout": "ar",
+   "saved_eval": "runs/edit_seed1_300m/runs/ev3-ar300-s1/keep/pass3/eval",
+   "note": "Paper Table 5 AR baseline, seed 1: same data and order as edit300v3, AR layout. Final checkpoint, step 187797."
+  }
+ ],
+ "part2_sets": [
+  {
+   "key": "coedit",
+   "data": "coedit",
+   "split": "validation",
+   "label": "CoEdIT validation"
+  },
+  {
+   "key": "iterater",
+   "data": "iterater_human_sent",
+   "split": "test",
+   "label": "IteraTeR human sentences (test)"
+  },
+  {
+   "key": "synth",
+   "data": "synth",
+   "split": "dev",
+   "label": "Synthetic errors (dev; 1 in 4 already clean)"
+  },
+  {
+   "key": "synth_real",
+   "data": "synth_real",
+   "split": "dev",
+   "label": "Realistic synthetic errors (dev)"
+  },
+  {
+   "key": "iterater_clean",
+   "data": "iterater_human_sent",
+   "split": "test",
+   "clean": true,
+   "label": "IteraTeR human, clean drafts (reference given as the draft; nothing to fix)"
+  }
+ ]
+}

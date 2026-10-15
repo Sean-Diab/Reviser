@@ -1,0 +1,1 @@
+{"name": "ld_n05_imm_m", "description": "Left to right; 5% of tokens first written as a nearby word, deleted and replaced right away; masked", "order": {"source": "l2r"}, "errors": {"rate": 0.05, "kind": "near", "when": "imm", "mask": true, "near_d": 4}, "seed": 123, "err_seed": 7}

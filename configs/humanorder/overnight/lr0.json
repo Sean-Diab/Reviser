@@ -1,0 +1,1 @@
+{"name": "lr0", "description": "Pure left to right: every token typed in order at the end, no cursor moves (end of the jump spectrum)", "order": {"source": "l2r"}, "errors": null, "seed": 123}

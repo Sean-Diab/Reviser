@@ -1,16 +1,4 @@
-# Reduce language skew from generated artifacts.
-# Keep source code language stats focused on hand-written code.
-
-# Generated visualization pages
-visualizations/**/*.html linguist-generated=true
-
-# Generated result reports/pages
-results/**/*.html linguist-generated=true
-results/**/*.htm linguist-generated=true
-
-# Optional: if JSON artifacts are machine-generated and large, exclude too
-results/**/*.json linguist-generated=true
-results/**/*.jsonl linguist-generated=true
-
-# Exclude paper TeX from language stats so repository language mix reflects code.
-paper/**/*.tex linguist-vendored=true
+# Keep the language stats on the hand-written code: the sample outputs and the replay page are generated.
+samples/** linguist-generated=true
+data/** linguist-generated=true
+*.jsonl -diff

@@ -1,0 +1,47 @@
+{
+  "name": "promptlock_patch_v1",
+  "purpose": "optional training-time legality mask with the 35-token prompt locked (config training.legality_mask, default off): before the cross-entropy (train and dev), MOVE logits that would land left of prefix_len or right of the canvas end, and the DELETE logit at cursor <= prefix_len, are set to -inf; a gold label that is illegal under this mask raises (never a silent infinite loss)",
+  "note": "notes/promptlock-2026-10-08.md",
+  "date_utc": "2026-10-08",
+  "applies_to": "the July-control work tree ($R/work/src from ov_prepare.sh / big_prepare.sh step 6: bundle code/src + patches/pretrain_resttraj.patched.py); the result is a superset of work_lm/src (lossmask_patch_v1)",
+  "build": "bash scripts/humanorder/promptlock_patch_v1/make_tree.sh WORK_SRC OUT_SRC   (checks all input and output sha256s)",
+  "files": {
+    "pretrain_resttraj.py": {
+      "dest": "reviser/training/pretrain_resttraj.py",
+      "orig": "experiments/july_control/patches/pretrain_resttraj.patched.py",
+      "orig_sha256": "fa132f1cbbba91299a1a5631716474eec5fb5d2a6fc5048425712b892a1aa612",
+      "patched_sha256": "9b5bbf9899acc9e7639262947a3fdac6fa36ba5eba8dbe7a77a4a41519d45794",
+      "change": "reads training.legality_mask (default false); when true: collators built with legality_state=True, _promptlock_mask_logits applied to the logits before CE in the train loop and in evaluate_resttraj_dev, counters printed as '[promptlock] step=... labels_checked=... illegal_labels=0 nonfinite_losses=...' at each log step and '[promptlock] final: ...' at the end; an illegal gold label prints '[promptlock] FATAL ...' (first 10 positions) and raises RuntimeError. When false: no code on the training path changes (same RNG use, same tensors)."
+    },
+    "resttraj_pretrain_collator.py": {
+      "dest": "reviser/data/resttraj_pretrain_collator.py",
+      "orig": "scripts/humanorder/lossmask_patch_v1/resttraj_pretrain_collator.py",
+      "orig_sha256": "78dcc95451ceab304a3ba57cb160a2820f0d1f03f50144ff02d5ccdd33da48f3",
+      "bundle_orig_sha256": "c438c994a0390b2ff684fff60f4b11648ef08a672b940bd669e02b1e3ff4098d",
+      "patched_sha256": "a7e1d016b8c822daedff4b19d8313587d87c59efa01bdfb0d4520dd0d9cb29ab",
+      "change": "lossmask_patch_v1 collator + cursor_state_before_actions() and constructor flag legality_state (default False). When True the batch also has legal_cursor / legal_canvas_len (B, S) long: the executor's cursor and canvas length BEFORE each action (input position t predicts actions[t] from the state after actions[:t]); 0 at padding. When False the output is identical to lossmask_patch_v1."
+    },
+    "raining_resttraj_bucketed_dataset.py": {
+      "dest": "reviser/data/raining_resttraj_bucketed_dataset.py",
+      "orig_sha256": "5ed4a842522ae19acdd83068f699fa1369b9c1711543c88bb213ff2715a8781b",
+      "patched_sha256": "0a88425399286fa7c9e7279d3f3c4d96198c80d359cbc6a8e8f09222577cef54",
+      "change": "none relative to lossmask_patch_v1 (copied unchanged so the tree is self-contained)"
+    }
+  },
+  "rule": {
+    "positions": "label position t (actions[t]); state = executor state after actions[:t] (insert at cursor then cursor+1; DELETE pops the token left of the cursor, no-op at 0; moves clamp to [0, len])",
+    "illegal_move": "cursor + amt < prefix_len  or  cursor + amt > canvas_len   (landing exactly on prefix_len is legal)",
+    "illegal_delete": "cursor <= prefix_len",
+    "never_masked": "inserts, EOR, every other token (so no all -inf row and no NaN)",
+    "prefix_len": "batch prefix_lens from prefix_len_shardK.npy (35 for the July/C4 prompt arms)"
+  },
+  "diff": "promptlock_patch_v1.diff (trainer vs experiments/july_control/patches/pretrain_resttraj.patched.py; collator vs lossmask_patch_v1)",
+  "diff_sha256": "91860a961e92c574ac39267dba52c47db440b50b996207536e175a03f5af7841",
+  "tools": {
+    "make_tree.sh": "ffc853c7b237b85e5bcda8c74007021ce11698f87cf60c700f595920d3af9d4e",
+    "check_promptlock.py": "30ba0c0408f0914919a902f41bc090061c96f3322ee057767caebc57e0bc5231",
+    "smoke_train_cpu.sh": "0bcaff0a8f286036a1d5469a191a2647d76e2ce9740395989410740f33b0c0fd"
+  },
+  "tests": "tmp/promptlock/train.ready.json and notes/promptlock-2026-10-08.md (data scan, collator vs reference, model CE check, CPU trainer smokes A/B/C)",
+  "ddp_compat": "scripts/humanorder/big608/ddp_patch.py (sha256 3f2496999da6...) applies to this trainer: 15 edits, output sha256 ac8316466e67840dde4ae7d4bfc660e44393e04c668ef8f0a73cefbdd83c604d, py_compile OK (not run under torchrun here)"
+}

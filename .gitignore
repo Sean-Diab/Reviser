@@ -1,4 +1,23 @@
+# Python
 __pycache__/
-*.pyc
-tmp/
-outputs/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Checkpoints and data go to Hugging Face, not Git (the C4 prompts in data/papereval/ are kept)
+*.pt
+*.safetensors
+*.bin
+*.npy
+/checkpoints/
+/data/*
+!/data/papereval/
+/runs/
+/outputs/
+/DEC/
+wandb/
+
+# API keys the data scripts read (scripts/editdata/haiku_batch.py: keys/anthropic-data.txt)
+/keys/

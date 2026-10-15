@@ -1,0 +1,466 @@
+{
+ "name": "editdata night_v2 (2026-10-08, helper C)",
+ "note": "Prompt targets per phase (source paragraphs drafted, not kept pairs). The dispatcher (night_run.py dispatch) re-reads this file every round: for each worker it fills the first phase that still has targets, lowest cut/target share first. 'only' limits a worker to some cat_level keys; 'depth' overrides queued chunks per worker.",
+ "phases": [
+  {
+   "name": "p7b_coherence_sent",
+   "entries": [
+    {
+     "cat": "coherence",
+     "level": "sent",
+     "prompts": 62500
+    }
+   ]
+  },
+  {
+   "name": "p7a_clarity_par",
+   "entries": [
+    {
+     "cat": "clarity",
+     "level": "par",
+     "prompts": 410000
+    }
+   ]
+  },
+  {
+   "name": "p7e_fill_clarity_par",
+   "entries": [
+    {
+     "cat": "clarity",
+     "level": "par",
+     "prompts": 400000
+    }
+   ]
+  },
+  {
+   "name": "p7f_fill_coherence",
+   "entries": [
+    {
+     "cat": "coherence",
+     "level": "sent",
+     "prompts": 300000
+    },
+    {
+     "cat": "coherence",
+     "level": "par",
+     "prompts": 300000
+    }
+   ]
+  }
+ ],
+ "depth": {
+  "P0": 0,
+  "P1": 0,
+  "Q0": 0,
+  "R0": 0,
+  "S0": 0,
+  "S1": 0,
+  "T0": 0,
+  "T1": 0,
+  "T2": 0,
+  "T3": 0,
+  "U0": 0,
+  "U1": 0,
+  "V0": 0,
+  "V1": 0,
+  "V2": 0,
+  "V3": 0,
+  "W0": 0,
+  "W1": 0,
+  "W2": 0,
+  "W3": 0,
+  "X0": 0,
+  "X1": 0,
+  "X2": 0,
+  "X3": 0
+ },
+ "collect_drop": [
+  "0t72_"
+ ],
+ "note_72b": "2026-10-08 06:55Z: 72B-AWQ (tp 2, 2x L40) rejected: about 10x fewer kept tokens per dollar than 32B-AWQ on the same 300 prompts; its test chunk 0t72_flucla is left out of the collected data (same paragraphs as 0t32_flucla).",
+ "retired_phases": {
+  "retired_utc": "2026-10-08T07:22:08Z",
+  "why": "coordinator request ~07:20Z: stop LLM grammar sentences, weight toward categories furthest below the 1B-token plan",
+  "phases": [
+   {
+    "name": "p1_grammar_polish",
+    "entries": [
+     {
+      "cat": "polish",
+      "level": "par",
+      "prompts": 30000
+     },
+     {
+      "cat": "polish",
+      "level": "sent",
+      "prompts": 25000
+     },
+     {
+      "cat": "grammar",
+      "level": "par",
+      "prompts": 30000
+     },
+     {
+      "cat": "grammar",
+      "level": "sent",
+      "prompts": 7500
+     }
+    ]
+   },
+   {
+    "name": "p2_coherence",
+    "entries": [
+     {
+      "cat": "coherence",
+      "level": "par",
+      "prompts": 30000
+     },
+     {
+      "cat": "coherence",
+      "level": "sent",
+      "prompts": 12500
+     }
+    ]
+   },
+   {
+    "name": "p3_fluency_clarity",
+    "entries": [
+     {
+      "cat": "fluency",
+      "level": "par",
+      "prompts": 35000
+     },
+     {
+      "cat": "fluency",
+      "level": "sent",
+      "prompts": 20000
+     },
+     {
+      "cat": "clarity",
+      "level": "par",
+      "prompts": 35000
+     },
+     {
+      "cat": "clarity",
+      "level": "sent",
+      "prompts": 20000
+     }
+    ]
+   },
+   {
+    "name": "p4_round_robin",
+    "entries": [
+     {
+      "cat": "polish",
+      "level": "par",
+      "prompts": 100000
+     },
+     {
+      "cat": "fluency",
+      "level": "par",
+      "prompts": 100000
+     },
+     {
+      "cat": "clarity",
+      "level": "par",
+      "prompts": 100000
+     },
+     {
+      "cat": "coherence",
+      "level": "par",
+      "prompts": 60000
+     },
+     {
+      "cat": "polish",
+      "level": "sent",
+      "prompts": 60000
+     },
+     {
+      "cat": "fluency",
+      "level": "sent",
+      "prompts": 60000
+     },
+     {
+      "cat": "clarity",
+      "level": "sent",
+      "prompts": 60000
+     },
+     {
+      "cat": "grammar",
+      "level": "par",
+      "prompts": 40000
+     }
+    ]
+   }
+  ]
+ },
+ "note_rebalance": "2026-10-08T07:22:08Z: one phase replaces p1-p4. Weight per category_level = share of the unique GPT-2 tokens still missing against the 1B-token plan (plan shares from notes/reviser-edit-data-plan-2026-10-06.md: grammar 18%, fluency 15%, clarity 15%, coherence 12%, polish 15%; unique = 1B/3; 50/50 paragraph/sentence), with 'have' = helper D's train pools (data/editdata/mix_v2/manifest.json) + C4_200M + tonight's collected data (data/editdata/night_v2/rebalance_0725.json). Targets = 650k prompts x weight minus prompts already cut tonight for that key, so drafting prompts flow in proportion to the shortfall. grammar_sent gets none (C4_200M: 485M tokens). The strict coherence gate is unchanged.",
+ "retired_phases_later": [
+  {
+   "retired_utc": "2026-10-08T10:18:13Z",
+   "why": "coordinator ~10:25Z: halve both clarity weights (low yield: ~8 tokens/prompt for clarity_sent), freed share to the other shortfall tasks in proportion",
+   "phase": {
+    "name": "p5_rebalanced_0722",
+    "entries": [
+     {
+      "cat": "clarity",
+      "level": "par",
+      "prompts": 93650,
+      "weight": 0.144,
+      "short_unique_tokens_M": 24.99,
+      "prompts_before_change": 150
+     },
+     {
+      "cat": "fluency",
+      "level": "par",
+      "prompts": 90150,
+      "weight": 0.143,
+      "short_unique_tokens_M": 24.73,
+      "prompts_before_change": 2650
+     },
+     {
+      "cat": "grammar",
+      "level": "par",
+      "prompts": 61400,
+      "weight": 0.121,
+      "short_unique_tokens_M": 21.04,
+      "prompts_before_change": 17500
+     },
+     {
+      "cat": "polish",
+      "level": "sent",
+      "prompts": 63400,
+      "weight": 0.121,
+      "short_unique_tokens_M": 20.88,
+      "prompts_before_change": 15000
+     },
+     {
+      "cat": "polish",
+      "level": "par",
+      "prompts": 60300,
+      "weight": 0.12,
+      "short_unique_tokens_M": 20.73,
+      "prompts_before_change": 17500
+     },
+     {
+      "cat": "clarity",
+      "level": "sent",
+      "prompts": 62500,
+      "weight": 0.096,
+      "short_unique_tokens_M": 16.65,
+      "prompts_before_change": 0
+     },
+     {
+      "cat": "coherence",
+      "level": "sent",
+      "prompts": 57100,
+      "weight": 0.088,
+      "short_unique_tokens_M": 15.27,
+      "prompts_before_change": 200
+     },
+     {
+      "cat": "coherence",
+      "level": "par",
+      "prompts": 54300,
+      "weight": 0.084,
+      "short_unique_tokens_M": 14.56,
+      "prompts_before_change": 400
+     },
+     {
+      "cat": "fluency",
+      "level": "sent",
+      "prompts": 53800,
+      "weight": 0.083,
+      "short_unique_tokens_M": 14.34,
+      "prompts_before_change": 0
+     }
+    ]
+   },
+   "cut_at_retirement": {
+    "p5_rebalanced_0722/clarity_par": 37500,
+    "p5_rebalanced_0722/fluency_par": 37500,
+    "p5_rebalanced_0722/grammar_par": 25000,
+    "p5_rebalanced_0722/polish_sent": 25000,
+    "p5_rebalanced_0722/polish_par": 25000,
+    "p5_rebalanced_0722/clarity_sent": 25000,
+    "p5_rebalanced_0722/coherence_sent": 25000,
+    "p5_rebalanced_0722/coherence_par": 22500,
+    "p5_rebalanced_0722/fluency_sent": 22500
+   }
+  },
+  {
+   "retired_utc": "2026-10-09T00:11:57Z",
+   "why": "user decision ~00:10Z via coordinator: F's --report (C's 21:49Z manifest) shows every 1B-mix slot covered except clarity and coherence, so all remaining drafting goes to clarity/coherence",
+   "phase": {
+    "name": "p6_clarity_halved",
+    "entries": [
+     {
+      "cat": "clarity",
+      "level": "par",
+      "prompts": 172800,
+      "weight": 0.072,
+      "weight_p5": 0.144,
+      "p5_cut": 37500
+     },
+     {
+      "cat": "fluency",
+      "level": "par",
+      "prompts": 397200,
+      "weight": 0.1656,
+      "weight_p5": 0.143,
+      "p5_cut": 37500
+     },
+     {
+      "cat": "grammar",
+      "level": "par",
+      "prompts": 336400,
+      "weight": 0.1401,
+      "weight_p5": 0.121,
+      "p5_cut": 25000
+     },
+     {
+      "cat": "polish",
+      "level": "sent",
+      "prompts": 336400,
+      "weight": 0.1401,
+      "weight_p5": 0.121,
+      "p5_cut": 25000
+     },
+     {
+      "cat": "polish",
+      "level": "par",
+      "prompts": 333600,
+      "weight": 0.1389,
+      "weight_p5": 0.12,
+      "p5_cut": 25000
+     },
+     {
+      "cat": "clarity",
+      "level": "sent",
+      "prompts": 115200,
+      "weight": 0.048,
+      "weight_p5": 0.096,
+      "p5_cut": 25000
+     },
+     {
+      "cat": "coherence",
+      "level": "sent",
+      "prompts": 244400,
+      "weight": 0.1019,
+      "weight_p5": 0.088,
+      "p5_cut": 25000
+     },
+     {
+      "cat": "coherence",
+      "level": "par",
+      "prompts": 233600,
+      "weight": 0.0973,
+      "weight_p5": 0.084,
+      "p5_cut": 22500
+     },
+     {
+      "cat": "fluency",
+      "level": "sent",
+      "prompts": 230800,
+      "weight": 0.0961,
+      "weight_p5": 0.083,
+      "p5_cut": 22500
+     }
+    ]
+   }
+  },
+  {
+   "retired_utc": "2026-10-09T00:17:14Z",
+   "why": "replaced within minutes (no chunk cut from it) by the coordinator's 00:16Z order and fresh shortfalls",
+   "phases": [
+    {
+     "name": "p7a_clarity_coherence_gap",
+     "entries": [
+      {
+       "cat": "clarity",
+       "level": "par",
+       "prompts": 550000
+      },
+      {
+       "cat": "clarity",
+       "level": "sent",
+       "prompts": 292500
+      },
+      {
+       "cat": "coherence",
+       "level": "sent",
+       "prompts": 90000
+      }
+     ]
+    },
+    {
+     "name": "p7b_clarity_sent_rest",
+     "entries": [
+      {
+       "cat": "clarity",
+       "level": "sent",
+       "prompts": 597500
+      }
+     ]
+    },
+    {
+     "name": "p7c_most_repeated",
+     "entries": [
+      {
+       "cat": "polish",
+       "level": "sent",
+       "prompts": 200000
+      },
+      {
+       "cat": "fluency",
+       "level": "par",
+       "prompts": 200000
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "retired_utc": "2026-10-09T00:44:41Z",
+   "phase": {
+    "name": "p7c_clarity_sent",
+    "entries": [
+     {
+      "cat": "clarity",
+      "level": "sent",
+      "prompts": 865000
+     }
+    ]
+   },
+   "why": "user approved the main Haiku batch (coordinator 00:45Z): Haiku drafts clarity_sent from rows Qwen drafted but did not keep; no p7c chunk had been cut"
+  },
+  {
+   "retired_utc": "2026-10-09T00:56:53Z",
+   "phase": {
+    "name": "p7d_most_repeated",
+    "entries": [
+     {
+      "cat": "polish",
+      "level": "sent",
+      "prompts": 400000
+     },
+     {
+      "cat": "fluency",
+      "level": "par",
+      "prompts": 400000
+     }
+    ]
+   },
+   "why": "coordinator ~01:10Z: in F's 00:06Z report polish_sent_llm and fluency_para_llm are already subset (1.00 views, more data than the slot takes), so more of them would be thrown away; no p7d chunk had been cut"
+  }
+ ],
+ "note_p6": "2026-10-08T10:18:13Z: p6 = p5 weights with clarity_par and clarity_sent halved (0.144->0.072, 0.096->0.048); the freed 0.12 goes to the other seven entries in proportion to their p5 weights (x1.158). Targets = 600k prompts x weight, counted from zero in p6.",
+ "note_p6_x4": "14:10Z helper C: p6 targets x4 (600,100 -> 2400400 prompts), weights unchanged; at ~100k prompts/h the 600k horizon would have run out ~16:15Z and left the workers idle. Cut counts carry over. Old targets: {\"clarity_par\": 43200, \"fluency_par\": 99300, \"grammar_par\": 84100, \"polish_sent\": 84100, \"polish_par\": 83400, \"clarity_sent\": 28800, \"coherence_sent\": 61100, \"coherence_par\": 58400, \"fluency_sent\": 57700}",
+ "note_depth6": "2026-10-08T22:29Z: queue depth 6 (was the dispatcher default 4) for every drafting worker; U0/U1 keep the clean-worker depth 1. Why: dispatcher rounds grew to ~30 min (23 workers, ~10 s per pull or push), close to the ~44 min that 4 chunks last on the fastest GPUs (X, ~11 min per chunk).",
+ "note_depth_2355": "2026-10-08T23:55Z: while the screened supply refills after the 23:33Z run-out, depth 4 for P/R/S/T/V (they held 6 chunks) and 6 for W/X (served last in each round, they ran short), so new supply goes to W/X first; back to 6 for all once the supply recovers.",
+ "note_p7": "2026-10-09T00:17:14Z: user decision ~00:10Z (coordinator 00:0xZ and 00:16Z): all remaining drafting to clarity and coherence, in the coordinator's order clarity_par, coherence_sent, clarity_sent; then the most repeated LLM pools (polish_sent, fluency_par) if time is left. Shortfall per pass from F's --report on the 00:06:22Z manifest (coordinator, tmp/mixreport_0015/report.log): clarity_par 16.05M, clarity_sent 8.52M, coherence_sent 3.22M plan tokens; coherence_par covered. Tally tokens needed = short / 1.333 / 0.98 = 12.29M, 6.52M, 2.46M, minus tokens pulled since 00:06:22Z and the expected yield of p6 chunks still in flight (clarity_par 0.40M, clarity_sent 0.11M, coherence_sent 0.77M) = 11.89M, 6.41M, 1.69M; prompts = that / measured GPT-2 tokens per prompt (22.4, 7.41, 27.5) = 532.5k, 865k, 62.5k.",
+ "note_haiku_main": "2026-10-09T00:44:41Z: user approved the main Haiku batch (coordinator 00:45Z, $18 cap, helper H). Qwen order: p7b_coherence_sent first (62,500 prompts, ~25 chunks, close coherence_sent), then p7a_clarity_par, then p7d. p7c_clarity_sent retired (Haiku drafts it: pilot 35.5 kept GPT-2 tokens per prompt on rows Qwen did not keep, vs Qwen 7.4). p7a 532,500 -> 410,000 prompts: Haiku also drafts ~50k clarity_par prompts from Qwen-rejected rows (pilot 54.3 per prompt on such rows => ~2.7M tally tokens = ~120k Qwen prompts at 22.4). p7d polish_sent / fluency_par 200k -> 400k each so the boxes never run dry. Prepared as configs/editdata/night_v2_plan.haiku_main.json (6bff6758e2d742c1) at 00:4xZ; loaded with p7b moved first and p7a refreshed. Depths unchanged.",
+ "note_fill_0110": "2026-10-09T00:56:53Z: filler after p7b/p7a is now the pools that still repeat at 1.33 views in F's 00:06Z report (more unique rows there cut repeats): p7e more clarity_par (400k prompts), then p7f coherence_sent + coherence_par (300k each). p7d_most_repeated (polish_sent/fluency_par) retired: those slots are already subset at 1.00 views. Coordinator ~01:10Z (user: no idle boxes, no thrown-away work).",
+ "note_taper": "20261009T025039Z: depth <= 1 for every worker by night_autostop.py (time rule)",
+ "note_autostop": "20261009T031640Z: depth 0 for all workers by scripts/editdata/night_autostop.py (time rule: stop_at 2026-10-09T03:15:00Z)"
+}

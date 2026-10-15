@@ -1,0 +1,82 @@
+--- a/src/reviser/training/pretrain_resttraj.py
++++ b/src/reviser/training/pretrain_resttraj.py
+@@ -1004,6 +1004,14 @@
+     except Exception:
+         pass
+ 
++    # [july_control patch] optional torch RNG seed (July run left torch unseeded; data order is seeded separately)
++    _torch_seed = cfg.get("training", {}).get("torch_seed")
++    if _torch_seed is not None:
++        torch.manual_seed(int(_torch_seed))
++        if torch.cuda.is_available():
++            torch.cuda.manual_seed_all(int(_torch_seed))
++        print(f"[july_control] torch_seed={int(_torch_seed)}", flush=True)
++
+     tok = CursorTokenizer()
+     pad_id = int(tok.pad_token_id)
+ 
+@@ -1274,7 +1282,7 @@
+     tw_infer_ms = 0.0
+     tw_ckpt_ms = 0.0
+ 
+-    def save_latest() -> float:
++    def save_latest(force_snapshot: bool = False) -> float:
+         t0 = time.perf_counter()
+         latest_path = ckpt_dir / "checkpoint_latest.pt"
+         # Always write/overwrite the "latest" checkpoint.
+@@ -1289,7 +1297,7 @@
+         )
+ 
+         # Optionally also write a non-overwritten snapshot keyed by step.
+-        write_step_snapshots = bool(cfg.get("training", {}).get("checkpoint_write_step_snapshots", True))
++        write_step_snapshots = force_snapshot or bool(cfg.get("training", {}).get("checkpoint_write_step_snapshots", True))
+         snapshot_written = None
+         if write_step_snapshots:
+             snap_path = ckpt_dir / f"checkpoint_step{int(state.step):012d}.pt"
+@@ -1314,6 +1322,15 @@
+         )
+         return (time.perf_counter() - t0) * 1e3
+ 
++    # [july_control patch] equal-budget stopping + extra snapshots (do not change the training math)
++    stop_at_tokens = int(cfg.get("training", {}).get("stop_at_tokens_processed", 0) or 0)
++    snapshot_steps = {int(x) for x in (cfg.get("training", {}).get("snapshot_at_steps") or [])}
++    snapshot_tokens = sorted(int(x) for x in (cfg.get("training", {}).get("snapshot_at_tokens") or []))
++    snapshot_tokens = [x for x in snapshot_tokens if x > int(state.tokens_processed)]
++    if stop_at_tokens or snapshot_steps or snapshot_tokens:
++        print(f"[july_control] stop_at_tokens_processed={stop_at_tokens} snapshot_at_steps={sorted(snapshot_steps)} "
++              f"snapshot_at_tokens={snapshot_tokens}", flush=True)
++
+     prefetch_to_device = bool(cfg.get("training", {}).get("prefetch_to_device", True))
+     data_iter = _prefetch_loader_to_cuda(dl, device) if (prefetch_to_device and device.type == "cuda") else dl
+     timed_batches = _timed_iter(iter(data_iter))
+@@ -1433,6 +1450,19 @@
+                 accum_input_tokens = 0
+                 if int(state.step) >= int(total_steps) and not bool(cfg["training"].get("run_forever", False)):
+                     stop_training = True
++                # [july_control patch]
++                if stop_at_tokens and int(state.tokens_processed) >= stop_at_tokens:
++                    print(f"[july_control] stop: step={int(state.step)} tokens_processed={int(state.tokens_processed)} "
++                          f">= {stop_at_tokens}", flush=True)
++                    stop_training = True
++                _force_snap = int(state.step) in snapshot_steps
++                while snapshot_tokens and int(state.tokens_processed) >= snapshot_tokens[0]:
++                    snapshot_tokens.pop(0)
++                    _force_snap = True
++                if _force_snap and not stop_training:
++                    tw_ckpt_ms += float(save_latest(force_snapshot=True))
++                    last_ckpt_t = time.time()
++                    last_ckpt_tokens = int(state.tokens_processed)
+ 
+                 # Accumulate timing (synchronize only when logging to keep overhead low).
+                 if timing_enabled:
+@@ -1600,8 +1630,8 @@
+         if stop_training:
+             break
+ 
+-    if int(state.step) > 0 and int(state.tokens_processed) != int(last_ckpt_tokens):
+-        tw_ckpt_ms += float(save_latest())
++    if int(state.step) > 0 and (int(state.tokens_processed) != int(last_ckpt_tokens) or stop_at_tokens):
++        tw_ckpt_ms += float(save_latest(force_snapshot=True))
+ 
+     print(f"[pretrain_resttraj] finished at epoch={state.epoch} step={state.step} total_steps={total_steps}", flush=True)
+ 

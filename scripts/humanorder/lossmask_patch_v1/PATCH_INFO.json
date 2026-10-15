@@ -1,0 +1,21 @@
+{
+  "name": "lossmask_patch_v1",
+  "purpose": "optional per-action loss mask for the July-control trainer (1 = label ignored); used by the overnight delete arms whose wrong inserts are masked",
+  "applies_to_bundle": "runs/july_control/bundle/july_control_code.tar.gz (sha256 1a003f3b...; code/src/reviser/data/)",
+  "import_chain": "pretrain_resttraj.patched.py -> data.training_resttraj_bucketed_dataset -> reviser.data.training_resttraj_bucketed_dataset -> reviser.data.raining_resttraj_bucketed_dataset; collator imported directly from reviser.data.resttraj_pretrain_collator",
+  "files": {
+    "raining_resttraj_bucketed_dataset.py": {
+      "orig_sha256": "5ed4a842522ae19acdd83068f699fa1369b9c1711543c88bb213ff2715a8781b",
+      "patched_sha256": "0a88425399286fa7c9e7279d3f3c4d96198c80d359cbc6a8e8f09222577cef54",
+      "change": "loads shards/rest_lossmask_shardK.npy if present (uint8, aligned with rest_tokens) and adds sample['loss_mask']; no RNG use, no change when the file is absent"
+    },
+    "resttraj_pretrain_collator.py": {
+      "orig_sha256": "c438c994a0390b2ff684fff60f4b11648ef08a672b940bd669e02b1e3ff4098d",
+      "patched_sha256": "78dcc95451ceab304a3ba57cb160a2820f0d1f03f50144ff02d5ccdd33da48f3",
+      "change": "after prefix masking, labels[i] = -100 where sample['loss_mask'][i] == 1"
+    }
+  },
+  "diff": "lossmask_patch_v1.diff",
+  "test": "tests/test_overnight_variants.py::test_lossmask_patch_identity_and_masking (no mask file: batches and collated tensors identical to the original; mask file: same batch order, labels -100 exactly at prefix + masked actions). Passed 2026-10-07 05:21Z in WSL /opt/venv (CPU).",
+  "note": "masked labels still count in tokens_processed (attention_mask sum), so the 83,866,148-token budget is the same input-token budget as every other arm; the loss mean is over unmasked labels"
+}

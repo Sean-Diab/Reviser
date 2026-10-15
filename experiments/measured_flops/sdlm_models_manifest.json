@@ -1,0 +1,118 @@
+{
+ "purpose": "task 41 row 11b (scripts/benchmarks/sdlm_flops.py, scripts/wsl/sdlm_flops.sh); anonymous HF downloads (tmp/hf_sdlm/dl.py, token=False); weights kept out of Git and R2 (public, revision-pinned)",
+ "models": {
+  "OpenGVLab/SDLM-3B-D4": {
+   "revision": "925abb3f6c5abe4eacf7f9621630d2397f16af49",
+   "local_dir": "tmp/hf_sdlm/SDLM-3B-D4",
+   "files": {
+    "added_tokens.json": {
+     "bytes": 630,
+     "sha256": "1e861aae4a9d5c0ec2ecb2168006dd9642a4a1e44ef881878e32576b01afc661"
+    },
+    "attn_mask_utils.py": {
+     "bytes": 13141,
+     "sha256": "49518a927b9a82abdb91a79fc0d14c7693141290902dbc1d408df8a8f0b95346"
+    },
+    "config.json": {
+     "bytes": 973,
+     "sha256": "71572c4f622eaccf00c14f16aea41399857ab2d482eaa7c1fe27026bb084cfa1"
+    },
+    "configuration_sdlm.py": {
+     "bytes": 7028,
+     "sha256": "1c5ea9359592e53c3a5a0a6749f296dcbe49b105d4b6348fbe61cc2c10dc7ffd"
+    },
+    "generation_config.json": {
+     "bytes": 172,
+     "sha256": "8ed892916a6237914bf023714ab7069a1c896c4a51ff8a9fa827cb8880335374"
+    },
+    "merges.txt": {
+     "bytes": 1670344,
+     "sha256": "455e0caaa06abffc663e9282dfe71dde07fd1991eaf24146bf08793c4dba4497"
+    },
+    "model-00001-of-00002.safetensors": {
+     "bytes": 4956454384,
+     "sha256": "200449dfca9b05753170676361263f19072087724bd7c064df86cf3dcbd025a7"
+    },
+    "model-00002-of-00002.safetensors": {
+     "bytes": 1835590832,
+     "sha256": "3bbcf44b214a63dca958a35df24f051f9732714bef3764afaf6fd7b84c3e1696"
+    },
+    "model.safetensors.index.json": {
+     "bytes": 35639,
+     "sha256": "26eeab00b4f3d6b3d07c25a690f35261a27b1f10bae7d0bb854e270a06d10b95"
+    },
+    "modeling_sdlm.py": {
+     "bytes": 73443,
+     "sha256": "92328d4862527dd492803787d878771f3ca20c439d42acdf168eaae8dfd1cbe8"
+    },
+    "special_tokens_map.json": {
+     "bytes": 761,
+     "sha256": "1029cbc33fa9a111ce04fad77f042a8bb489eb1dedae900cec45d8ce97d594ac"
+    },
+    "tokenizer_config.json": {
+     "bytes": 7449,
+     "sha256": "9e450a67a884768e5b2cfc6f8344b488e56fcfadee122d3fed7f68859c751804"
+    },
+    "vocab.json": {
+     "bytes": 3383407,
+     "sha256": "87a257b04b17642a0688c98cd1df89c398bda4fee532d6f88b38a659ecb4ac8d"
+    }
+   }
+  },
+  "Qwen/Qwen2.5-3B": {
+   "revision": "3aab1f1954e9cc14eb9509a215f9e5ca08227a9b",
+   "local_dir": "tmp/hf_sdlm/Qwen2.5-3B",
+   "files": {
+    "config.json": {
+     "bytes": 683,
+     "sha256": "27467e2fc311a7656c09a43ae9c3d408211e1f212bbddbc93c8596a06423826f"
+    },
+    "generation_config.json": {
+     "bytes": 138,
+     "sha256": "8c970692323e3ea0e9b8b0a4dca79388d31226e41f83c9fd6014804280ebf6e8"
+    },
+    "merges.txt": {
+     "bytes": 1671839,
+     "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+    },
+    "model-00001-of-00002.safetensors": {
+     "bytes": 3968658944,
+     "sha256": "f9558df91d3b89b4826e4db37439edb52f1d62a4fd602685013e7ca6b9f60f8f"
+    },
+    "model-00002-of-00002.safetensors": {
+     "bytes": 2203268048,
+     "sha256": "51410930d5cf19a998fdb17ef0c46e4d9ace72c97a975a3331395a8a500f5edb"
+    },
+    "model.safetensors.index.json": {
+     "bytes": 35581,
+     "sha256": "bc8aaa0c87d4335177e01c765f1de0db81661c67c1a72fbfb0d521b09f5ddc56"
+    },
+    "tokenizer.json": {
+     "bytes": 7031645,
+     "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+    },
+    "tokenizer_config.json": {
+     "bytes": 7228,
+     "sha256": "c91efca15ceff6e9ee9424db58a6f59cd41294e550a86cbd07e3c1fb500b34f9"
+    },
+    "vocab.json": {
+     "bytes": 2776833,
+     "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+   }
+  }
+ },
+ "code": {
+  "tmp/sdlm3b_code/sdlm_inference.py": {
+   "sha256": "c5f203e525ee9725a6e594a27f8c53256be9827b943f4dbca4509e1c0e9fc136",
+   "bytes": 15574,
+   "source": "https://raw.githubusercontent.com/OpenGVLab/SDLM/7e8a26efedee3ba3d8548013fe07cefd1c36607a/sdlm_inference.py"
+  },
+  "tmp/sdlm_stub/flash_attn/__init__.py": {
+   "sha256": "9560a3479b805751f225e98a61e3f3e1502e16cb6d05381b1dcf508425b1cd0d",
+   "bytes": 417,
+   "source": "verbatim stub text from sdlm_inference.py __main__ (lines 414-424), used because flash_attn is not installed; the modeling code only calls flash_attn when is_flash_attn_2_available()"
+  }
+ },
+ "environment": "WSL Reviser-Ubuntu /opt/venv (torch 2.6.0+cu124) with tmp/pydeps-sdlm (pip --no-deps --target: transformers 4.37.2, tokenizers 0.15.2, huggingface_hub 0.20.3) ahead of .pydeps on PYTHONPATH"
+}

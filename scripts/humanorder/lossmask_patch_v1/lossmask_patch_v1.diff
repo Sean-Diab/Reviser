@@ -1,0 +1,50 @@
+--- experiments/july_control/code/src/reviser/data/raining_resttraj_bucketed_dataset.py	2026-09-23 23:31:03.407156300 -0700
++++ scripts/humanorder/lossmask_patch_v1/raining_resttraj_bucketed_dataset.py	2026-10-06 22:16:43.435857000 -0700
+@@ -47,6 +47,15 @@
+     return None
+ 
+ 
++def _load_optional_lossmask(shards_dir: Path, shard_idx: int) -> Optional[np.ndarray]:
++    # [lossmask_patch_v1] optional per-action label mask (uint8 flat, aligned with rest_tokens; 1 = ignore label).
++    # Absent file -> None -> samples are exactly as in the unpatched dataset. Never touches the RNG.
++    path = shards_dir / f"rest_lossmask_shard{shard_idx:06d}.npy"
++    if path.is_file():
++        return np.load(path, mmap_mode="r")
++    return None
++
++
+ def _paired_shards(shards_dir: Path) -> List[int]:
+     token_indices = set()
+     offset_indices = set()
+@@ -149,6 +158,7 @@
+ 
+             for shard_idx in shard_order:
+                 tokens, offsets, prefix_lens = cache.get(shard_idx)
++                lossmask = _load_optional_lossmask(self.shards_dir, int(shard_idx))  # [lossmask_patch_v1]
+                 lengths = np.asarray(offsets[:, 1], dtype=np.int64)
+                 valid = (lengths >= self.min_len) & (lengths <= self.max_len)
+                 if not np.any(valid):
+@@ -187,6 +197,8 @@
+                         }
+                         if prefix_lens is not None and sample_idx < int(prefix_lens.shape[0]):
+                             sample["prefix_len"] = np.int64(prefix_lens[sample_idx])
++                        if lossmask is not None:  # [lossmask_patch_v1]
++                            sample["loss_mask"] = np.asarray(lossmask[start : start + length], dtype=np.uint8)
+                         batch.append(sample)
+                         if len(batch) >= self.batch_size:
+                             yield batch
+--- experiments/july_control/code/src/reviser/data/resttraj_pretrain_collator.py	2026-09-23 23:31:03.409656300 -0700
++++ scripts/humanorder/lossmask_patch_v1/resttraj_pretrain_collator.py	2026-10-06 22:16:45.508225500 -0700
+@@ -145,6 +145,12 @@
+             labels = list(actions)
+             for idx in range(min(prefix_len, len(labels))):
+                 labels[idx] = -100
++            # [lossmask_patch_v1] optional per-action label mask from the dataset (1 = ignore this label).
++            loss_mask = sample.get("loss_mask")
++            if loss_mask is not None:
++                for idx, flag in enumerate(_to_int_list(loss_mask)[: len(labels)]):
++                    if flag:
++                        labels[idx] = -100
+             record: Dict[str, Any] = {
+                 "input_ids": input_ids,
+                 "labels": labels,

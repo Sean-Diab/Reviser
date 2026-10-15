@@ -1,0 +1,44 @@
+{
+ "note": "Public inputs of panel T (task 41 rows 3a/3b, 6). Downloaded 2026-09-25 to tmp/fairseq/ (gitignored). Re-download from the URLs; verify sha256 before use.",
+ "files": [
+  {
+   "name": "const_levt_en_de.tgz",
+   "url": "https://github.com/raymondhs/constrained-levt/releases/download/v1.0/const_levt_en_de.tgz",
+   "bytes": 596917056,
+   "sha256": "62b25278242ac84be483a94fe0326a034453453d57d85ba2689d0e44c9702064",
+   "license": "MIT",
+   "contents": "LevT WMT14 En-De checkpoint_best.pt (65.9M params), dicts, BPE codes ende.code, BPE'd newstest2014 (+ wikt/IATE constraint sets)"
+  },
+  {
+   "name": "maskPredict_en_de.tar.gz",
+   "url": "http://dl.fbaipublicfiles.com/fairseq/models/maskPredict_en_de.tar.gz",
+   "bytes": 757849586,
+   "sha256": "3c583fbe5e1a27d49217055d3dc1a891dfbc6a1f678363f950d35c1477a343ed",
+   "license": "CC-BY-NC 4.0",
+   "contents": "Mask-Predict (CMLM) WMT14 En-De checkpoint_best.pt (76.3M params), dicts"
+  },
+  {
+   "name": "wmt16_en_de_bpe32k.tar.gz",
+   "url": "https://dl.fbaipublicfiles.com/fairseq/data/wmt16_en_de_bpe32k.tar.gz",
+   "bytes": 389434059,
+   "sha256": "69f08c87aed383e90ffc9916e77bc58ae58ca8176a428032ffd4cb6e0e451d20",
+   "license": "WMT data terms (Google-preprocessed WMT16 En-De, fairseq mirror)",
+   "contents": "binarised train/valid/test (newstest2014), dict, bpe.32000; Mask-Predict's data (its get_data.sh Google Drive link is dead)"
+  }
+ ],
+ "code": [
+  {
+   "repo": "https://github.com/raymondhs/constrained-levt",
+   "commit": "18d11f26f6fa2e0000822905d4b6f375aae773ed",
+   "fairseq": "0.8.0 fork",
+   "license": "MIT"
+  },
+  {
+   "repo": "https://github.com/facebookresearch/Mask-Predict",
+   "commit": "11c753526ebbbf5b946d1305a613b830f4f29232",
+   "fairseq": "0.7.2 fork",
+   "license": "CC-BY-NC 4.0"
+  }
+ ],
+ "environment": "scripts/wsl/fairseq_env.sh: python3.10 venv tmp/fairseq/env, torch 1.13.1+cpu, numpy 1.23.5, cython<3, sacrebleu 1.5.1; full freeze runs/measured_flops/panel_t/env_freeze.txt"
+}

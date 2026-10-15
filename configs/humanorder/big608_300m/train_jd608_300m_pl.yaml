@@ -1,0 +1,64 @@
+# big608_300m (helper L, 2026-10-09; notes/big608-300m-2026-10-09.md): the released Reviser 300M (release sha256
+# 5aa7d598..., wrapped by scripts/humanorder/big608_300m/wrap_ckpt_300m.py) trained on the same data and recipe as
+# helper B's 100M big608 run (configs/humanorder/big608/train_jd608_pl.yaml, sha256 624352c5...): delete recipe
+# jd_n05_imm_m over all 134 July text shards, prompt locked in training (training.legality_mask), stop at July@608M's
+# tokens_processed 608,744,505.
+# Copy of train_jd608_pl.yaml. Changed here, and only here:
+#   * model: the 300M shape of the release (d_model 896, n_heads 14, d_ff 3584, n_layers 26); dropout 0.1 kept as B.
+#   * LR 2e-6 -> 2e-7 (B: 2e-5 -> 2e-6). Why: the original fine-tunes used the same global batch of 64 for both sizes,
+#     with peak LR 1e-4 for 100M and 1e-5 for 300M (10x lower for 300M). B's 100M run used 1/5 of the 100M original
+#     peak (2e-5), with the floor at peak/10. The same 1/5 of the 300M original peak gives 2e-6, floor 2e-7.
+# Unchanged from B: data dir and order (seed 123, num_workers 2), batch 8 x accum 4 (global 32 sequences; the original
+# fine-tunes also used one global batch for both sizes, so it is not scaled), cosine over total_tokens 2e9 (122,070
+# steps), warmup_ratio 0.02, weight decay 0.1, fp16 with GradScaler, torch_seed 123, snapshots every 4,000 steps plus
+# July's token counts, stop at 608,744,505 tokens (expected at step 79,831, as B measured).
+model:
+  vocab_size: 50291
+  d_model: 896
+  n_heads: 14
+  d_ff: 3584
+  n_layers: 26
+  dropout: 0.1
+  attention_dropout: 0.1
+  positional_encoding: rope
+  tie_embeddings: true
+
+data:
+  resttraj_dir: /root/rv2/hq/data/big_jd_n05_imm_m
+  dataset_type: raining_bucketed
+  max_seq_length: 512
+  max_canvas_length: 512
+  use_canvas: false
+  min_traj_len: 100
+  max_traj_len: 350
+  bucket_size: 5
+  seed: 123
+  refresh_secs: 60
+
+training:
+  batch_size: 8
+  gradient_accumulation: 4
+  learning_rate: 2.0e-6
+  min_learning_rate: 2.0e-7
+  weight_decay: 0.1
+  warmup_ratio: 0.02
+  total_tokens: 2000000000
+  num_workers: 2
+  prefetch_factor: 2
+  pin_memory: true
+  log_every_steps: 20
+  checkpoint_interval_secs: 1800
+  inference_interval_secs: 900
+  inference_n_examples: 2
+  inference_max_new_actions: 120
+  inference_fixed_prefix_length: 35
+  # ---- july_control additions (require patches/pretrain_resttraj.patched.py; do not change the training math) ----
+  stop_at_tokens_processed: 608744505      # July step 84,488 tokens_processed (July@608M)
+  snapshot_at_steps: [4000, 8000, 12000, 16000, 20000, 24000, 28000, 32000, 36000, 40000, 44000, 48000, 52000, 56000, 60000, 64000, 68000, 72000, 76000, 80000, 84488]   # every 4,000 steps (+ July's last step)
+  snapshot_at_tokens: [17757912, 83866148, 291313242]   # July ckpt token counts (steps 2467 / 11656 / 40445)
+  checkpoint_write_step_snapshots: false   # time-based saves only refresh checkpoint_latest.pt (disk)
+  torch_seed: 123                          # July left torch unseeded (dropout RNG); seeded here for re-runs
+  legality_mask: true                      # prompt lock (promptlock_patch_v1): MOVE/DELETE logits that would touch the 35-token prompt or leave the canvas are -inf before CE
+
+hardware:
+  precision_type: float16

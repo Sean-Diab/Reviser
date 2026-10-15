@@ -1,0 +1,123 @@
+{
+ "ar_100m": {
+  "paper_table1_row": "AR 100M",
+  "checkpoint_sha256": "252aff006f82abd42c3642f12d84fb4f5485fbf17799fbd2d8d2c49fa12a1e36",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": false
+ },
+ "reviser_100m_released": {
+  "paper_table1_row": "100M: Reviser, released",
+  "checkpoint_sha256": "54dc8596df81b3bc5fab97268d57546223334f9de3253225aa46861c4079a29a",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ },
+ "reviser_100m_runjump": {
+  "paper_table1_row": "100M: + run-and-jump",
+  "checkpoint_sha256": "0256464d733f524c1b3a73c2aac7631624d9305ab0f9237204852d23b63bd9a7",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ },
+ "reviser_100m_runjump_delete": {
+  "paper_table1_row": "100M: + run-and-jump + Delete",
+  "checkpoint_sha256": "641db09e231108be002461d41d914fa91ca567937e6f58e3224ac71ec6ab9342",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ },
+ "reviser_100m_runjump_delete_rl_s1": {
+  "paper_table1_row": "100M: + RL, seed 1",
+  "checkpoint_sha256": "492bd8fe728edbf851592da5ee16dd448c30daf381477b473cda0c4b5c32d4b0",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ },
+ "reviser_100m_runjump_delete_rl_s2": {
+  "paper_table1_row": "100M: + RL, seed 2",
+  "checkpoint_sha256": "9f5a753f78f16059040ad8be7d33e4d7814139e9dbef98121334059f387a5396",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ },
+ "reviser_100m_runjump_delete_rl_s3": {
+  "paper_table1_row": "100M: + RL, seed 3",
+  "checkpoint_sha256": "ee9fe2f23284d91f807856be1f77086116219a26350d4896fff1b14586ae4891",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ },
+ "ar_300m": {
+  "paper_table1_row": "AR 300M",
+  "checkpoint_sha256": "30e07dcad4c8f65777807c6586b8878f541dedf850a7734b0a4b10734ebb6352",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": false
+ },
+ "reviser_300m_released": {
+  "paper_table1_row": "300M: Reviser, released",
+  "checkpoint_sha256": "e35392983a94826d9395b7bda9e642cb2d796be93de369ac7b44582c804e3c6a",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ },
+ "reviser_300m_runjump_delete": {
+  "paper_table1_row": "300M: + run-and-jump + Delete",
+  "checkpoint_sha256": "98710f51b2a00ae3144b5118a6a2191d8ec3b8865afb796e20ef6015a6bc63d0",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ },
+ "reviser_300m_runjump_delete_rl_s3": {
+  "paper_table1_row": "300M: + RL, seed 3",
+  "checkpoint_sha256": "ae0cedc8cbb162e4acda1d80aecb00731585938706a894386e74310c9627f392",
+  "prompts_sha256": "ec08c05a59a93b42ae175efada3d621b10d5947d6b3d8081e6be8d419f54a9da",
+  "n_prompts": 3000,
+  "prefix_len": 35,
+  "temperature": 0.9,
+  "top_k": 50,
+  "max_new_actions": 220,
+  "lock_prompt": true
+ }
+}
